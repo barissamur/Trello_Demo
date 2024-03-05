@@ -16,8 +16,4 @@
 		<ProjectReference Include="..\Tello_Demo.Domain\Tello_Demo.Domain.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Specifications\" />
-	</ItemGroup>
-
 </Project>

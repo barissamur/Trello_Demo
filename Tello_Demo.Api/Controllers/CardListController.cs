@@ -23,9 +23,11 @@ namespace Tello_Demo.Api.Controllers
 
         // GET: api/<CardListController> 
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<CardListDTO>> Get()
         {
-            return new string[] { "value1", "value2" };
+            var result = await _cardListService.GetCardListAsync();
+
+            return result.Value;
         }
 
         // GET api/<CardListController>/5

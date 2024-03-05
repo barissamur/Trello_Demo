@@ -2,6 +2,7 @@
 using FluentResults;
 using Tello_Demo.Application.DTOs;
 using Tello_Demo.Application.Interfaces;
+using Tello_Demo.Application.Specifications;
 using Tello_Demo.Domain.Models;
 
 namespace Tello_Demo.Application.Services;
@@ -29,7 +30,28 @@ public class CardListService : ICardListService
             return Result.Ok(resultDto);
         }
         catch (Exception ex)
-        { 
+        {
+            return Result.Fail(new Error(ex.Message));
+        }
+    }
+
+    public Task<Result<CardListDTO>> GetCardListByIdAsync(CardListDTO cardList)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<Result<IEnumerable<CardListDTO>>> GetCardListAsync()
+    {
+        try
+        {
+            AllCardListWithCardsSpecification spec = new AllCardListWithCardsSpecification();
+            List<CardList> cardLists = await _repo.ListAsync(spec);
+            IEnumerable<CardListDTO> resultDto = cardLists.Select(x => _mapper.Map<CardList, CardListDTO>(x));
+
+            return Result.Ok(resultDto);
+        }
+        catch (Exception ex)
+        {
             return Result.Fail(new Error(ex.Message));
         }
     }

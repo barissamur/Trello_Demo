@@ -7,4 +7,8 @@ namespace Tello_Demo.Application.Interfaces;
 public interface ICardListService
 {
     Task<Result<CardListDTO>> CreateCardListAsync(CardListDTO cardList);
+
+    Task<Result<IEnumerable<CardListDTO>>> GetCardListAsync();
+    Task<Result<CardListDTO>> GetCardListByIdAsync(CardListDTO cardList);
+
 }
