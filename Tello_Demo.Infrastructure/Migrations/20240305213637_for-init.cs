@@ -35,7 +35,7 @@ namespace Tello_Demo.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ListId = table.Column<int>(type: "int", nullable: false),
+                    CardListId = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -47,17 +47,17 @@ namespace Tello_Demo.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Cards", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cards_CardLists_ListId",
-                        column: x => x.ListId,
+                        name: "FK_Cards_CardLists_CardListId",
+                        column: x => x.CardListId,
                         principalTable: "CardLists",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cards_ListId",
+                name: "IX_Cards_CardListId",
                 table: "Cards",
-                column: "ListId");
+                column: "CardListId");
         }
 
         /// <inheritdoc />

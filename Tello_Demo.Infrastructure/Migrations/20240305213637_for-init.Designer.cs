@@ -12,7 +12,7 @@ using Tello_Demo.Infrastructure.Context;
 namespace Tello_Demo.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240305190450_for-init")]
+    [Migration("20240305213637_for-init")]
     partial class forinit
     {
         /// <inheritdoc />
@@ -33,6 +33,9 @@ namespace Tello_Demo.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CardListId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("datetime2");
 
@@ -46,9 +49,6 @@ namespace Tello_Demo.Infrastructure.Migrations
                     b.Property<int>("Index")
                         .HasColumnType("int");
 
-                    b.Property<int>("ListId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -59,7 +59,7 @@ namespace Tello_Demo.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ListId");
+                    b.HasIndex("CardListId");
 
                     b.ToTable("Cards");
                 });
@@ -99,13 +99,13 @@ namespace Tello_Demo.Infrastructure.Migrations
 
             modelBuilder.Entity("Tello_Demo.Domain.Models.Card", b =>
                 {
-                    b.HasOne("Tello_Demo.Domain.Models.CardList", "List")
+                    b.HasOne("Tello_Demo.Domain.Models.CardList", "CardList")
                         .WithMany("Cards")
-                        .HasForeignKey("ListId")
+                        .HasForeignKey("CardListId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("List");
+                    b.Navigation("CardList");
                 });
 
             modelBuilder.Entity("Tello_Demo.Domain.Models.CardList", b =>

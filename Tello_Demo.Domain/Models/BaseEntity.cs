@@ -14,5 +14,5 @@ public class BaseEntity
     /// <summary>
     /// aktif mi pasif mi
     /// </summary>
-    public bool IA { get; set; }
+    public bool IA { get; set; } = true;
 }

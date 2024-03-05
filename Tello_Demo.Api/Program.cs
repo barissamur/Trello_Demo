@@ -16,6 +16,13 @@ var connectionString = builder.Configuration.GetConnectionString("ApplicationDbC
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+// iç içe döngü olarak getirme sorunu için
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+});
+
+
 // injection
 builder.Services.AddScoped<ICardListService, CardListService>();
 builder.Services.AddScoped<ICardService, CardService>();

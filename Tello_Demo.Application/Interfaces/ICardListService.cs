@@ -1,8 +1,10 @@
-﻿using Tello_Demo.Application.DTOs;
+﻿using FluentResults;
+using Tello_Demo.Application.DTOs;
+using Tello_Demo.Domain.Models;
 
 namespace Tello_Demo.Application.Interfaces;
 
-public interface ICardListService 
+public interface ICardListService
 {
-    Task CreateCardListAsync(CardListDTO cardListDTO);
- }
+    Task<Result<CardListDTO>> CreateCardListAsync(CardListDTO cardList);
+}

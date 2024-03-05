@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Tello_Demo.Domain.Models;
+﻿namespace Tello_Demo.Domain.Models;
 
 public class Card : BaseEntity
 {
-    public CardList CardList { get; set; } = null!;
+    public int CardListId { get; set; }
+    public CardList? CardList { get; set; } 
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
     public string Type { get; set; } = null!;

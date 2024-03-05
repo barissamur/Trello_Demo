@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tello_Demo.Application.DTOs;
 using Tello_Demo.Application.Interfaces;
-using Tello_Demo.Application.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,15 +11,17 @@ namespace Tello_Demo.Api.Controllers
     public class CardListController : ControllerBase
     {
         private readonly ICardListService _cardListService;
+        private readonly ICardService _cardService;
 
-        public CardListController(ICardListService cardListService)
+        public CardListController(ICardListService cardListService
+            , ICardService cardService)
         {
             _cardListService = cardListService;
+            _cardService = cardService;
         }
 
 
-        // GET: api/<CardListController>
-        [HttpGet]
+        // GET: api/<CardListController> 
         [HttpGet]
         public IEnumerable<string> Get()
         {
@@ -36,10 +37,20 @@ namespace Tello_Demo.Api.Controllers
 
         // POST api/<CardListController>
         [HttpPost]
-        public async Task Post([FromBody] CardListDTO cardListDTO)
+        public async Task<ActionResult> Post([FromBody] CardListDTO cardListDTO)
         {
-            await _cardListService.CreateCardListAsync(cardListDTO);
+            var result = await _cardListService.CreateCardListAsync(cardListDTO);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Value); // veya CreatedAtRoute, CreatedAtAction vb.
+            }
+
+            return BadRequest(result.Errors);
         }
+
+
+        // Oluşturulan CardList'i getiren bir aksiyon örneği. Gerçek uygulamanızda buna benzer bir aksiyonunuz olmalı
+
 
         // PUT api/<CardListController>/5
         [HttpPut("{id}")]
