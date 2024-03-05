@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tello_Demo.Domain.Models;
 
-namespace Tello_Demo.Domain.Models;
+namespace Tello_Demo.Application.DTOs;
 
-public class Card : BaseEntity
+public class CardListDTO 
 {
-    public CardList CardList { get; set; } = null!;
+    public int Id { get; set; }
+    public int AccountId { get; set; }
     public string Title { get; set; } = null!;
-    public string Description { get; set; } = null!;
     public string Type { get; set; } = null!;
     public int Index { get; set; }
+
+    public List<CardDTO> Cards { get; set; } = [];
 }

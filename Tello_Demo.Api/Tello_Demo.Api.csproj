@@ -22,8 +22,4 @@
 		<ProjectReference Include="..\Tello_Demo.Infrastructure\Tello_Demo.Infrastructure.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="Controllers\" />
-	</ItemGroup>
-
 </Project>
