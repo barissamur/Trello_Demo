@@ -1,22 +1,98 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+}
+
+/*other styles*/
+
+/* Ana konteyner */
+.sortable-container {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+    background-color: #f0f0f0;
+}
+
+/* Kart listeleri */
+.card-list {
+    flex: 0 0 auto; /* Flex özelliði ile kart listelerini yan yana diz */
+    width: 300px; /* Her kart listesinin geniþliði */
+    margin-right: 10px; /* Kart listeleri arasýnda boþluk */
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Gölgelendirme efekti */
+    display: flex;
+    flex-direction: column;
+}
+
+    /* Kart listesi baþlýðý */
+    .card-list h3 {
+        padding: 10px;
+        margin: 0;
+        background-color: #0079bf;
+        color: #ffffff;
+        text-align: center;
+        border-radius: 5px 5px 0 0;
+    }
+
+/* Sýralanabilir kartlar */
+.sortable-cards {
+    padding: 10px;
+    flex-grow: 1; /* Ýçeriði esnek bir þekilde doldur */
+    min-height: 100px; /* Minimum yükseklik */
+}
+
+/* Kartlar */
+.card {
+    padding: 8px;
+    background-color: #e2e4e6;
+    margin-bottom: 8px;
+    border-radius: 3px;
+    box-shadow: 0 1px 0 rgba(9,30,66,.25);
+    cursor: pointer; /* Sürüklerken imleç þeklini deðiþtir */
+}
+
+/* Kart placeholder */
+.card-placeholder {
+    background-color: #aed6f1 !important;
+    border: 2px dashed #0079bf;
+    margin-bottom: 8px;
+    border-radius: 3px;
+}
+
+/* Yatay kaydýrma çubuðunu düzenle */
+.sortable-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.sortable-container::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+.sortable-container::-webkit-scrollbar-thumb {
+    background-color: #cccccc;
+    border-radius: 4px;
+}
+
+/* Kart listesi ve kartlara hover efekti */
+.card-list:hover, .card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
