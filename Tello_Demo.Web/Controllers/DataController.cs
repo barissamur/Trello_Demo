@@ -28,7 +28,7 @@ public class DataController : Controller
 
     [HttpPost("SetIndexCards")]
     public async Task<IActionResult> SetIndexCards([FromBody] List<SetIndex> setIndexs)
-    { 
+    {
         return Ok();
     }
 
@@ -38,6 +38,37 @@ public class DataController : Controller
     {
         return Ok();
     }
+
+
+    [HttpPost("CreateList")] 
+    public async Task<IActionResult> CreateList([FromBody] CardList cardList)
+    {
+        try
+        {
+            var response = _cardListService.CreateCardListAsync(cardList);
+            return RedirectToAction(nameof(Index));
+        }
+        catch
+        {
+            return View();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -56,20 +87,6 @@ public class DataController : Controller
         return View();
     }
 
-    // POST: DataController/Create
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public ActionResult Create(IFormCollection collection)
-    {
-        try
-        {
-            return RedirectToAction(nameof(Index));
-        }
-        catch
-        {
-            return View();
-        }
-    }
 
     // GET: DataController/Edit/5
     public ActionResult Edit(int id)

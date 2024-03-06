@@ -6,5 +6,5 @@ public class SetIndex
 
     public int ListIndex { get; set; }
 
-    public Dictionary<int, int>? CarddNewIndex { get; set; } = [];
+    public Dictionary<int, int>? CardIdNewIndex { get; set; } = [];
 }

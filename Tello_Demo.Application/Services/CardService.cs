@@ -46,4 +46,15 @@ public class CardService : ICardService
             return Result.Fail(new Error(ex.Message));
         }
     }
+
+    public Task<Result<CardDTO>> UpdateCardAsync(CardDTO cardDTO)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Result<IEnumerable<CardDTO>>> UpdateRangeCardAsync(List<CardDTO> cardDTOs)
+    {
+        throw new NotImplementedException();
+
+    }
 }

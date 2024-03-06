@@ -1,12 +1,12 @@
 ﻿namespace Tello_Demo.Web.Models;
 
-public class CardList 
+public class CardList
 {
     public int Id { get; set; }
     public int AccountId { get; set; }
     public string Title { get; set; } = null!;
-    public string Type { get; set; } = null!;
+    public string? Type { get; set; } = null!;
     public int Index { get; set; }
 
-    public List<Card> Cards { get; set; } = [];
+    public List<Card>? Cards { get; set; } = [];
 }

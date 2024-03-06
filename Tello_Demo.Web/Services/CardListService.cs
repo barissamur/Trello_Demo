@@ -25,9 +25,19 @@ public class CardListService
         }
         catch (JsonException ex)
         {
-            // Hata detaylarını loglayın veya hata mesajını düzeltmek için işlem yapın.
             throw new InvalidOperationException("JSON serileştirme hatası", ex);
         }
+    }
 
+    public async Task<HttpResponseMessage> CreateCardListAsync(CardList cardList)
+    { 
+        var response = await _clientFactory.PostAsJsonAsync("api/CardList", cardList);
+         
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Hata yanıtı içeriği: {errorContent}");
+        }
+        return response;
     }
 }

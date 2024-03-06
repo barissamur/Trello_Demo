@@ -26,73 +26,99 @@ body {
 /* Ana konteyner */
 .sortable-container {
     display: flex;
-    overflow-x: auto;
-    padding: 10px;
-    background-color: #f0f0f0;
+    flex-wrap: wrap;
+    gap: 20px; /* Liste aralarý için boþluk */
+    align-items: flex-start; /* Liste yükseklikleri farklý olsa bile üstte baþlamalarýný saðlar */
+    padding: 20px;
+    background: linear-gradient(to right, #b6a2cb 0%, #91aab7 100%);
+    justify-content: flex-start;
 }
 
-/* Kart listeleri */
 .card-list {
-    flex: 0 0 auto; /* Flex özelliði ile kart listelerini yan yana diz */
-    width: 300px; /* Her kart listesinin geniþliði */
-    margin-right: 10px; /* Kart listeleri arasýnda boþluk */
-    background-color: #ffffff;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Gölgelendirme efekti */
+    width: 300px;
+    margin-right: 20px;
+    background-color: #ebecf0;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
-    /* Kart listesi baþlýðý */
     .card-list h3 {
-        padding: 10px;
+        padding: 15px;
         margin: 0;
-        background-color: #0079bf;
+        background-color: #5aac44;
         color: #ffffff;
-        text-align: center;
-        border-radius: 5px 5px 0 0;
+        font-size: 16px;
     }
 
-/* Sýralanabilir kartlar */
 .sortable-cards {
     padding: 10px;
-    flex-grow: 1; /* Ýçeriði esnek bir þekilde doldur */
-    min-height: 100px; /* Minimum yükseklik */
+    flex-grow: 1;
+    min-height: 100px;
 }
 
 /* Kartlar */
 .card {
-    padding: 8px;
-    background-color: #e2e4e6;
-    margin-bottom: 8px;
-    border-radius: 3px;
-    box-shadow: 0 1px 0 rgba(9,30,66,.25);
-    cursor: pointer; /* Sürüklerken imleç þeklini deðiþtir */
+    padding: 10px;
+    background-color: #ffffff;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(9,30,66,.25);
+    font-size: 14px;
 }
 
-/* Kart placeholder */
-.card-placeholder {
-    background-color: #aed6f1 !important;
-    border: 2px dashed #0079bf;
-    margin-bottom: 8px;
-    border-radius: 3px;
+.card-placeholder, .list-placeholder {
+    background-color: #a4a4a4 !important;
+    border: 2px dashed #888;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    box-shadow: none;
 }
 
-/* Yatay kaydýrma çubuðunu düzenle */
-.sortable-container::-webkit-scrollbar {
-    height: 8px;
+.list-placeholder {
+    width: 300px;
+    height: 50px;
+    margin-right: 20px;
 }
 
-.sortable-container::-webkit-scrollbar-track {
-    background-color: #f0f0f0;
+.sortable-card-lists > .ui-sortable-placeholder {
+    visibility: visible !important;
+    height: auto !important;
+    background: none !important;
 }
 
-.sortable-container::-webkit-scrollbar-thumb {
-    background-color: #cccccc;
-    border-radius: 4px;
+    .sortable-card-lists > .ui-sortable-placeholder::before {
+        content: '';
+        display: block;
+        height: 50px;
+        background-color: #a4a4a4;
+        border: 2px dashed #888;
+        border-radius: 6px;
+        margin-bottom: 20px;
+    }
+
+
+/* Yeni kart listesi eklemek için '+' iþaretinin stil tanýmý */
+.add-card-list {
+    width: 300px;
+    height: 50px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    cursor: pointer;
+    color: #0079bf;
+    font-size: 24px;
+    font-weight: bold;
+    user-select: none;
 }
 
-/* Kart listesi ve kartlara hover efekti */
-.card-list:hover, .card:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
+    .add-card-list:hover {
+        background-color: #e0e0e0; /* Arka plan rengi deðiþikliði */
+        box-shadow: 0 4px 6px rgba(0,0,0,0.15); /* Daha büyük gölge efekti */
+    }
