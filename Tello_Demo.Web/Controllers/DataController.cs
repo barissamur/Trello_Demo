@@ -48,13 +48,30 @@ public class DataController : Controller
         try
         {
             var response = _cardListService.CreateCardListAsync(cardList);
-            return RedirectToAction(nameof(Index));
+            return Ok();
+
         }
         catch
         {
             return View();
         }
     }
+
+    [HttpDelete("DeleteList/{id}")]
+    public async Task<IActionResult> DeleteList(int id)
+    {
+        try
+        {
+            var response = await _cardListService.DeleteCardListAsync(id);
+            return Ok();
+
+        }
+        catch
+        {
+            return View();
+        }
+    }
+
 
 
 

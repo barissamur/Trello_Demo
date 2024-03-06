@@ -8,7 +8,7 @@
             success: function (cardLists) {
                 displayCardLists(cardLists);
             },
-            error: function (e) {
+            error: function () {
                 console.log("Kart listeleri yüklenirken bir hata oluştu.");
             }
         });
@@ -20,7 +20,10 @@
 
         cardLists.forEach(list => {
             let listHtml = `<div class="card-list" data-list-id="${list.id}">
-                                <h3>${list.title}</h3>
+                                <div class="d-flex justify-content-between p-2 bg-primary">
+                                    <h3>${list.title}</h3>
+                                    <button type="button" class="delete-list btn" data-list-id="${list.id}">&#10006;</button>
+                                </div>
                                 <div class="sortable-cards">`;
 
             list.cards.forEach(card => {
@@ -44,16 +47,21 @@
         });
 
         $('#add-card-list').on('click', function () {
-            // Burada kullanıcıdan yeni listeye bir isim alabilirsiniz, örneğin bir prompt ile.
             var listName = prompt("Liste için bir isim giriniz:");
-            if (listName) { // Eğer kullanıcı bir isim girdiyse
+            if (listName) {
                 createNewList(listName);
+            }
+        });
+
+        $('.delete-list').on('click', function () {
+            var listId = $(this).data('list-id');
+            if (confirm("Bu listeyi silmek istediğinize emin misiniz?")) {
+                deleteList(listId);
             }
         });
 
         makeCardsSortable();
         makeCardListsSortable();
-
     }
 
     function makeCardsSortable() {
@@ -69,7 +77,6 @@
                 var endListId = ui.item.closest('.card-list').data('list-id');
                 var startPos = ui.item.data('start-pos');
                 var endPos = ui.item.index();
-
 
                 var affectedLists = [startListId];
                 if (startListId != endListId) {
@@ -121,6 +128,7 @@
             data: JSON.stringify(data),
             success: function () {
                 console.log("Liste indeksleri başarıyla güncellendi.");
+                fetchCardLists();
             },
             error: function (xhr, status, error) {
                 console.error("Güncelleme sırasında bir hata oluştu: ", error);
@@ -171,40 +179,32 @@
         });
     }
 
-
-
-
-    // click işlemleri
-
+    // click işlemleri 
     function editTitle(headerElement) {
         var currentTitle = headerElement.text();
         var listId = headerElement.closest('.card-list').data('list-id');
         var newTitle = prompt("Yeni başlık giriniz:", currentTitle);
 
         if (newTitle && newTitle !== currentTitle) {
-            // Başlığı DOM'da güncelle
             headerElement.text(newTitle);
 
-            // Sunucuya yeni başlığı göndermek için bir AJAX isteği yapın
             $.ajax({
-                url: '/api/Data/UpdateListTitle', // Endpoint'inizi güncelleyin
+                url: '/api/Data/UpdateListTitle',
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ listId: listId, title: newTitle }),
                 success: function () {
                     console.log("Liste başlığı başarıyla güncellendi.");
+                    fetchCardLists();
                 },
                 error: function (xhr, status, error) {
                     console.error("Başlık güncellenirken bir hata oluştu: ", error);
-                    // Başarısız olursa başlığı eski haline getirin
                     headerElement.text(currentTitle);
                 }
             });
         }
     }
 
-
-    // Sunucuya yeni liste oluşturma isteği gönderin
     function createNewList(listName) {
         let data = {
             Title: listName,
@@ -214,23 +214,33 @@
 
 
         $.ajax({
-            url: '/api/Data/CreateList', // Yeni liste oluşturma endpoint'iniz
+            url: '/api/Data/CreateList',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (newList) {
-                // Ekleme başarılı olduğunda, yeni listeyi UI'ya ekleyin.
-                // Yeni oluşturulan listeyi sayfaya ekleyecek fonksiyonu burada çağırın.
-                // Örneğin, bu newList nesnesi sunucudan dönen yeni liste bilgilerini içerebilir.
-                displayNewList(newList);
+            success: function () {
+                fetchCardLists();
             },
             error: function (xhr, status, error) {
                 console.error("Yeni liste eklenirken bir hata oluştu:", error);
             }
         });
 
-        fetchCardLists();
     }
 
+    function deleteList(listId) {
+        $.ajax({
+            url: '/api/Data/DeleteList/' + listId,
+            method: 'DELETE',
+            success: function () {
+                console.log("Liste başarıyla silindi.");
+                fetchCardLists();
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr, status);
+                console.error("Liste silinirken bir hata oluştu: ", error);
+            }
+        });
+    }
 
 });

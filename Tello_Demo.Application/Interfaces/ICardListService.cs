@@ -10,4 +10,5 @@ public interface ICardListService
     Task<Result> UpdateCardListAsync(CardListDTO cardList);
     Task<Result<IEnumerable<CardListDTO>>> GetCardListAsync();
     Task<Result<CardListDTO>> GetCardListByIdAsync(int id);
+    Task<Result> DeleteCardListAsync(CardListDTO cardList );
 }

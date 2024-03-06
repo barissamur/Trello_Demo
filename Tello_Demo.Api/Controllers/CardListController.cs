@@ -36,22 +36,18 @@ namespace Tello_Demo.Api.Controllers
             return result.Value;
         }
 
-        // POST api/<CardListController>
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] CardListDTO cardListDTO)
         {
             var result = await _cardListService.CreateCardListAsync(cardListDTO);
             if (result.IsSuccess)
             {
-                return Ok(result.Value); // veya CreatedAtRoute, CreatedAtAction vb.
+                return Ok(result.Value);
             }
 
             return BadRequest(result.Errors);
         }
 
-         
-
-        // PUT api/<CardListController>/5
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] CardListDTO cardListDTO)
         {
@@ -59,16 +55,24 @@ namespace Tello_Demo.Api.Controllers
 
             if (result.IsSuccess)
             {
-                return Ok(result); 
+                return Ok(result);
             }
 
             return BadRequest(result.Errors);
         }
 
-        // DELETE api/<CardListController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            var deleteCardList = await _cardListService.GetCardListByIdAsync(id);
+            var result = await _cardListService.DeleteCardListAsync(deleteCardList.Value);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result.Errors);
         }
     }
 }

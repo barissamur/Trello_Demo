@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Net;
 using Tello_Demo.Web.Models;
 
 namespace Tello_Demo.Web.Services;
@@ -49,6 +50,18 @@ public class CardListService
         {
             response = await _clientFactory.PutAsJsonAsync($"api/CardList/{item.Id}", item);
         }
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Hata yanıtı içeriği: {errorContent}");
+        }
+        return response;
+    }
+
+    public async Task<HttpResponseMessage> DeleteCardListAsync(int id)
+    { 
+        var response = await _clientFactory.DeleteAsync($"api/CardList/{id}");
 
         if (!response.IsSuccessStatusCode)
         {

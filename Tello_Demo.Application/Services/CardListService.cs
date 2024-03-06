@@ -83,4 +83,19 @@ public class CardListService : ICardListService
             return Result.Fail(new Error(ex.Message));
         }
     }
+
+    public async Task<Result> DeleteCardListAsync(CardListDTO cardListDTO)
+    {
+        try
+        {
+            CardList cardList = await _repo.GetByIdAsync(cardListDTO.Id);
+            await _repo.DeleteAsync(cardList);
+
+            return Result.Ok();
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(new Error(ex.Message));
+        }
+    }
 }
