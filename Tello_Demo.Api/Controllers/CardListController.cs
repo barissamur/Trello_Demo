@@ -49,14 +49,20 @@ namespace Tello_Demo.Api.Controllers
             return BadRequest(result.Errors);
         }
 
-
-        // Oluşturulan CardList'i getiren bir aksiyon örneği. Gerçek uygulamanızda buna benzer bir aksiyonunuz olmalı
-
+         
 
         // PUT api/<CardListController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<ActionResult> Put(int id, [FromBody] CardListDTO cardListDTO)
         {
+            var result = await _cardListService.UpdateCardListAsync(cardListDTO);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result); 
+            }
+
+            return BadRequest(result.Errors);
         }
 
         // DELETE api/<CardListController>/5

@@ -30,9 +30,26 @@ public class CardListService
     }
 
     public async Task<HttpResponseMessage> CreateCardListAsync(CardList cardList)
-    { 
+    {
         var response = await _clientFactory.PostAsJsonAsync("api/CardList", cardList);
-         
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Hata yanıtı içeriği: {errorContent}");
+        }
+        return response;
+    }
+
+    public async Task<HttpResponseMessage> UpdateCardListAsync(List<CardList> cardList)
+    {
+        HttpResponseMessage response = new();
+
+        foreach (var item in cardList)
+        {
+            response = await _clientFactory.PutAsJsonAsync($"api/CardList/{item.Id}", item);
+        }
+
         if (!response.IsSuccessStatusCode)
         {
             var errorContent = await response.Content.ReadAsStringAsync();

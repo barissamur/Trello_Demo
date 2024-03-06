@@ -27,20 +27,22 @@ public class DataController : Controller
 
 
     [HttpPost("SetIndexCards")]
-    public async Task<IActionResult> SetIndexCards([FromBody] List<SetIndex> setIndexs)
+    public async Task<IActionResult> SetIndexCards([FromBody] List<CardList> cardLists)
     {
+        var response = _cardListService.UpdateCardListAsync(cardLists);
         return Ok();
     }
 
 
     [HttpPost("SetIndexCardLists")]
-    public async Task<IActionResult> SetIndexCardLists([FromBody] List<SetIndex> setIndexs)
+    public async Task<IActionResult> SetIndexCardLists([FromBody] List<CardList> cardLists)
     {
+        var response = _cardListService.UpdateCardListAsync(cardLists);
         return Ok();
     }
 
 
-    [HttpPost("CreateList")] 
+    [HttpPost("CreateList")]
     public async Task<IActionResult> CreateList([FromBody] CardList cardList)
     {
         try

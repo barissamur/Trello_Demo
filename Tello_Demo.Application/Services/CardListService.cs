@@ -68,4 +68,19 @@ public class CardListService : ICardListService
             return Result.Fail(new Error(ex.Message));
         }
     }
+
+    public async Task<Result> UpdateCardListAsync(CardListDTO cardListDTO)
+    {
+        try
+        {
+            CardList card = _mapper.Map<CardListDTO, CardList>(cardListDTO);
+            await _repo.UpdateAsync(card);
+
+            return Result.Ok();
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(new Error(ex.Message));
+        }
+    }
 }

@@ -84,23 +84,30 @@
     }
 
     function updateAffectedLists(affectedListIds) {
-        var data = [];
-
-        affectedListIds.forEach(function (listId) {
+        var data = affectedListIds.map(function (listId) {
             var list = $('[data-list-id="' + listId + '"]');
             var listIndex = list.index();
+            var listTitle = list.find('h3').text();
 
-            var cardsNewIndex = {};
-            list.find('.card').each(function (index) {
-                var cardId = $(this).data('card-id');
-                cardsNewIndex[cardId] = index;
-            });
+            var cards = list.find('.card').map(function (index) {
+                return {
+                    Id: $(this).data('card-id'),
+                    Index: index,
+                    Title: $(this).find('p').text(),
+                    Description: 'Açıklama',
+                    Type: 'Type'
 
-            data.push({
-                ListId: parseInt(listId),
-                ListIndex: listIndex,
-                CardIdNewIndex: cardsNewIndex
-            });
+                };
+            }).get();
+
+            return {
+                Id: listId,
+                Index: listIndex,
+                Title: listTitle,
+                Cards: cards,
+                Type: 'Type'
+
+            };
         });
 
         setIndexCards(data);
@@ -138,8 +145,10 @@
     function updateAllListIndexes() {
         var data = $('#sortable-container .card-list').map(function (index) {
             return {
-                ListId: $(this).data('list-id'),
-                ListIndex: index
+                Id: $(this).data('list-id'),
+                Index: index,
+                Title: $(this).find('h3').text(),
+                Type: 'Type'
             };
         }).get();
 
