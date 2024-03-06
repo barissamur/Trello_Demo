@@ -1,3 +1,4 @@
+using Serilog;
 using Tello_Demo.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,12 +6,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Serilog configuration
+builder.Host.UseSerilog((ctx, lc) => lc
+    .WriteTo.Console()
+    .WriteTo.File("logs/log-.log", rollingInterval: RollingInterval.Day));
+
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.None;
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 });
- 
+
 // Yapýlandýrmadan BaseUrl deðerini okuyun
 var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"]; // Bu satýrý düzelttim
 
