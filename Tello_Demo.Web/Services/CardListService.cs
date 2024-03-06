@@ -1,5 +1,5 @@
-﻿using System.Text.Json;
-using Tello_Demo.Application.DTOs;
+﻿using Newtonsoft.Json;
+using Tello_Demo.Web.DTOs;
 
 namespace Tello_Demo.Web.Services;
 
@@ -17,9 +17,17 @@ public class CardListService
         var response = await _clientFactory.GetAsync("api/CardList");
         response.EnsureSuccessStatusCode();
 
-        var responseStream = await response.Content.ReadAsStreamAsync();
-        var cardLists = await JsonSerializer.DeserializeAsync<IEnumerable<CardListDTO>>(responseStream);
+        try
+        {
+            var responseStream = await response.Content.ReadAsStreamAsync();
+            var cardLists = JsonConvert.DeserializeObject<IEnumerable<CardListDTO>>(await response.Content.ReadAsStringAsync());
+            return cardLists ?? new List<CardListDTO>();
+        }
+        catch (JsonException ex)
+        {
+            // Hata detaylarını loglayın veya hata mesajını düzeltmek için işlem yapın.
+            throw new InvalidOperationException("JSON serileştirme hatası", ex);
+        }
 
-        return cardLists ?? new List<CardListDTO>();
     }
 }

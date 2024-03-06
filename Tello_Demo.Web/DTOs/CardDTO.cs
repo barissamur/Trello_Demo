@@ -1,4 +1,4 @@
-﻿namespace Tello_Demo.Application.DTOs;
+﻿namespace Tello_Demo.Web.DTOs;
 
 public class CardDTO 
 {
