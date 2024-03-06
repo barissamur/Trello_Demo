@@ -4,8 +4,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
- 
 
+builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.None;
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});
+ 
 // Yapýlandýrmadan BaseUrl deðerini okuyun
 var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"]; // Bu satýrý düzelttim
 
@@ -17,6 +22,7 @@ builder.Services.AddHttpClient("APIClient", client =>
 
 // Registering CardListService to DI container
 builder.Services.AddScoped<CardListService>();
+builder.Services.AddScoped<CardService>();
 
 var app = builder.Build();
 

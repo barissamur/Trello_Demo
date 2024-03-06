@@ -3,42 +3,36 @@ using System.Diagnostics;
 using Tello_Demo.Web.Models;
 using Tello_Demo.Web.Services;
 
-namespace Tello_Demo.Web.Controllers
+namespace Tello_Demo.Web.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly ILogger<HomeController> _logger;
+
+    public HomeController(ILogger<HomeController> logger)
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly CardListService _cardListService;
+        _logger = logger;
+    }
 
-        public HomeController(ILogger<HomeController> logger
-            , CardListService cardListService)
+    public IActionResult Index()
+    {
+        IndexVM model = new()
         {
-            _logger = logger;
-            _cardListService = cardListService;
-        }
+            AccountId = 1
+        };
 
-        public async Task<IActionResult> Index()
-        {
-            var cardLists = await _cardListService.GetCardListsAsync();
-
-            IndexVM model = new()
-            {
-                cardLists = cardLists
-            };
-
-            return View(model);
-        }
+        return View(model);
+    }
 
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+    public IActionResult Privacy()
+    {
+        return View();
+    }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

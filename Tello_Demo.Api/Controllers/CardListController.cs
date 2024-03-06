@@ -11,13 +11,10 @@ namespace Tello_Demo.Api.Controllers
     public class CardListController : ControllerBase
     {
         private readonly ICardListService _cardListService;
-        private readonly ICardService _cardService;
 
-        public CardListController(ICardListService cardListService
-            , ICardService cardService)
+        public CardListController(ICardListService cardListService)
         {
             _cardListService = cardListService;
-            _cardService = cardService;
         }
 
 
@@ -32,9 +29,11 @@ namespace Tello_Demo.Api.Controllers
 
         // GET api/<CardListController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<CardListDTO> Get(int id)
         {
-            return "value";
+            var result = await _cardListService.GetCardListByIdAsync(id);
+
+            return result.Value;
         }
 
         // POST api/<CardListController>

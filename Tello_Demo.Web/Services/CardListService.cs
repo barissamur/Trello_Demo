@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Tello_Demo.Web.DTOs;
+using Tello_Demo.Web.Models;
 
 namespace Tello_Demo.Web.Services;
 
@@ -12,7 +12,7 @@ public class CardListService
         _clientFactory = clientFactory.CreateClient("APIClient");
     }
 
-    public async Task<IEnumerable<CardListDTO>> GetCardListsAsync()
+    public async Task<IEnumerable<CardList>> GetCardListsAsync()
     {
         var response = await _clientFactory.GetAsync("api/CardList");
         response.EnsureSuccessStatusCode();
@@ -20,8 +20,8 @@ public class CardListService
         try
         {
             var responseStream = await response.Content.ReadAsStreamAsync();
-            var cardLists = JsonConvert.DeserializeObject<IEnumerable<CardListDTO>>(await response.Content.ReadAsStringAsync());
-            return cardLists ?? new List<CardListDTO>();
+            var cardLists = JsonConvert.DeserializeObject<IEnumerable<CardList>>(await response.Content.ReadAsStringAsync());
+            return cardLists ?? new List<CardList>();
         }
         catch (JsonException ex)
         {

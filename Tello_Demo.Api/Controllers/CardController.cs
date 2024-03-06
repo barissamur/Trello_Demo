@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tello_Demo.Application.DTOs;
+using Tello_Demo.Application.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -9,6 +10,12 @@ namespace Tello_Demo.Api.Controllers
     [ApiController]
     public class CardController : ControllerBase
     {
+        private readonly ICardService _cardService;
+
+        public CardController(ICardService cardService)
+        {
+            _cardService = cardService;
+        }
         // GET: api/<CardController>
         [HttpGet]
         public IEnumerable<string> Get()
@@ -18,9 +25,11 @@ namespace Tello_Demo.Api.Controllers
 
         // GET api/<CardController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<CardDTO> Get(int id)
         {
-            return "value";
+            var result = await _cardService.GetCardByIdAsync(id);
+
+            return result.Value;
         }
 
         // POST api/<CardController>

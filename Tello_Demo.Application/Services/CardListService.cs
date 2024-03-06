@@ -35,9 +35,22 @@ public class CardListService : ICardListService
         }
     }
 
-    public Task<Result<CardListDTO>> GetCardListByIdAsync(CardListDTO cardList)
+    public async Task<Result<CardListDTO>> GetCardListByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            GetCardListByIdWithCardsSpecifications getCardListByIdWithCardsSpecifications = new(id);
+
+            CardList cardList = await _repo.GetBySpecAsync(getCardListByIdWithCardsSpecifications);
+
+            CardListDTO resultDto = _mapper.Map<CardList, CardListDTO>(cardList);
+
+            return Result.Ok(resultDto);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(new Error(ex.Message));
+        }
     }
 
     public async Task<Result<IEnumerable<CardListDTO>>> GetCardListAsync()

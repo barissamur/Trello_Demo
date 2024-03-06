@@ -7,6 +7,6 @@ public class AllCardListWithCardsSpecification : Specification<CardList>
 {
     public AllCardListWithCardsSpecification()
     {
-        Query.Include(x => x.Cards);
+        Query.Include(x => x.Cards.OrderBy(x => x.Index)).OrderBy(x => x.Index);
     }
 }

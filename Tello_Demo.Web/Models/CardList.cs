@@ -1,6 +1,6 @@
-﻿namespace Tello_Demo.Web.DTOs;
+﻿namespace Tello_Demo.Web.Models;
 
-public class CardListDTO 
+public class CardList 
 {
     public int Id { get; set; }
     public int AccountId { get; set; }
@@ -8,5 +8,5 @@ public class CardListDTO
     public string Type { get; set; } = null!;
     public int Index { get; set; }
 
-    public List<CardDTO> Cards { get; set; } = [];
+    public List<Card> Cards { get; set; } = [];
 }
