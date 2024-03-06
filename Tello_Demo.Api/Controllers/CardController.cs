@@ -34,8 +34,15 @@ namespace Tello_Demo.Api.Controllers
 
         // POST api/<CardController>
         [HttpPost]
-        public void Post([FromBody] CardDTO cardDTO)
+        public async Task<ActionResult> Post([FromBody] CardDTO cardDTO)
         {
+            var result = await _cardService.CreateCardAsync(cardDTO);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Value);
+            }
+
+            return BadRequest(result.Errors);
         }
 
         // PUT api/<CardController>/5
@@ -46,8 +53,17 @@ namespace Tello_Demo.Api.Controllers
 
         // DELETE api/<CardController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            var deleteCard = await _cardService.GetCardByIdAsync(id);
+            var result = await _cardService.DeleteCardAsync(deleteCard.Value);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result.Errors);
         }
     }
 }

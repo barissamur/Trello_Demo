@@ -19,14 +19,41 @@ public class CardService : ICardService
         _mapper = mapper;
     }
 
-    public Task<Result<CardDTO>> CreateCardAsync(CardDTO cardDTO)
+    public async Task<Result<CardDTO>> CreateCardAsync(CardDTO cardDTO)
     {
-        throw new NotImplementedException();
+        try
+        {
+            Card card = _mapper.Map<CardDTO, Card>(cardDTO);
+            card.CardList = null;
+            Card response = await _repo.AddAsync(card);
+            CardDTO resultDto = _mapper.Map<Card, CardDTO>(response);
+
+            return Result.Ok(resultDto);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(new Error(ex.Message));
+        }
     }
 
     public Task<Result<IEnumerable<CardDTO>>> CreateRangeCardAsync(List<CardDTO> cardDTOs)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<Result> DeleteCardAsync(CardDTO cardDTO)
+    {
+        try
+        {
+            Card card = await _repo.GetByIdAsync(cardDTO.Id);
+            await _repo.DeleteAsync(card);
+
+            return Result.Ok();
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(new Error(ex.Message));
+        }
     }
 
     public async Task<Result<CardDTO>> GetCardByIdAsync(int id)

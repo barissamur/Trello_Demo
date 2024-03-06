@@ -17,6 +17,7 @@ public class DataController : Controller
         _cardService = cardService;
     }
 
+
     [HttpGet("GetCardList")]
     public async Task<IActionResult> GetCardList()
     {
@@ -26,18 +27,10 @@ public class DataController : Controller
     }
 
 
-    [HttpPost("SetIndexCards")]
-    public async Task<IActionResult> SetIndexCards([FromBody] List<CardList> cardLists)
+    [HttpPost("UpdateCardListAndCards")]
+    public async Task<IActionResult> UpdateCardListAndCards([FromBody] List<CardList> cardLists, bool onlyTitle)
     {
-        var response = _cardListService.UpdateCardListAsync(cardLists);
-        return Ok();
-    }
-
-
-    [HttpPost("SetIndexCardLists")]
-    public async Task<IActionResult> SetIndexCardLists([FromBody] List<CardList> cardLists)
-    {
-        var response = _cardListService.UpdateCardListAsync(cardLists);
+        var response = await _cardListService.UpdateCardListAsync(cardLists);
         return Ok();
     }
 
@@ -47,15 +40,16 @@ public class DataController : Controller
     {
         try
         {
-            var response = _cardListService.CreateCardListAsync(cardList);
-            return Ok();
+            var response = await _cardListService.CreateCardListAsync(cardList);
 
+            return Ok(response);
         }
         catch
         {
-            return View();
+            return BadRequest();
         }
     }
+
 
     [HttpDelete("DeleteList/{id}")]
     public async Task<IActionResult> DeleteList(int id)
@@ -68,13 +62,45 @@ public class DataController : Controller
         }
         catch
         {
-            return View();
+            return BadRequest();
         }
     }
 
 
+    [HttpDelete("DeleteCard/{id}")]
+    public async Task<IActionResult> DeleteCard(int id)
+    {
+        try
+        {
+            var response = await _cardService.DeleteCardAsync(id);
+            return Ok();
+
+        }
+        catch
+        {
+            return BadRequest();
+        }
+    }
 
 
+    [HttpPost("AddCardToList/{id}")]
+    public async Task<IActionResult> AddCardToList([FromBody] Card card, int id)
+    {
+        try
+        {
+            card.CardList.Id = id;
+            card.CardList.Type = "Type";
+            card.Type = "Type";
+            card.Description = "Açıklama";
+            var response = await _cardService.CreateCardAsync(card);
+            return Ok();
+
+        }
+        catch
+        {
+            return BadRequest();
+        }
+    }
 
 
 

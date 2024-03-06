@@ -30,7 +30,7 @@ body {
     gap: 20px; /* Liste aralarý için boþluk */
     align-items: flex-start; /* Liste yükseklikleri farklý olsa bile üstte baþlamalarýný saðlar */
     padding: 20px;
-    background: linear-gradient(to right, #b6a2cb 0%, #91aab7 100%);
+    background: linear-gradient(to right, #bcb4c4 0%, #dedede 100%);
     justify-content: flex-start;
 }
 
@@ -121,3 +121,20 @@ body {
         background-color: #e0e0e0; /* Arka plan rengi deðiþikliði */
         box-shadow: 0 4px 6px rgba(0,0,0,0.15); /* Daha büyük gölge efekti */
     }
+
+
+.card {
+    position: relative;
+    /* Diðer kart stilleri */
+}
+
+.delete-card {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: none; /* Baþlangýçta gizli */
+}
+
+.card:hover .delete-card {
+    display: block; 
+}

@@ -4,8 +4,36 @@
 
 <div class="container">
     <div id="sortable-container" class="sortable-container">
-    
-   
+
+
+    </div>
+</div>
+
+
+<!-- Kart Düzenleme Modalı -->
+<div class="modal fade" id="cardEditModal" tabindex="-1" aria-labelledby="cardEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cardEditModalLabel">Kart Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Kart başlığı düzenleme formu -->
+                <div class="form-group mb-4">
+                    <label for="card-title" class="mb-2">Başlık</label>
+                    <input type="text" class="form-control" id="card-title" placeholder="Başlık">
+                </div>
+                <!-- Logları göster -->
+                <h6>Loglar:</h6>
+                <div id="card-logs">
+                    <!-- Loglar buraya eklenecek -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="save-card-changes">Değişiklikleri Kaydet</button>
+            </div>
+        </div>
     </div>
 </div>
 
