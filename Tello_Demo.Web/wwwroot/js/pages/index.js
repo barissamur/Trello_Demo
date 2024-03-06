@@ -3,21 +3,19 @@
 
     function fetchCardLists() {
         $.ajax({
-            url: '/api/Data/GetCardList', // Önceden oluşturduğunuz endpoint
+            url: '/api/Data/GetCardList',
             method: 'GET',
             success: function (cardLists) {
                 displayCardLists(cardLists);
             },
             error: function (e) {
-                console.log(e);
-                //alert("Kart listeleri yüklenirken bir hata oluştu.");
+                console.log("Kart listeleri yüklenirken bir hata oluştu.");
             }
         });
     }
 
     function displayCardLists(cardLists) {
         cardLists.forEach(list => {
-            // Her bir kart listesi için HTML yapısını oluştur
             let listHtml = `<div class="card-list" data-list-id="${list.id}">
                                 <h3>${list.title}</h3>
                                 <div class="sortable-cards">`;
@@ -34,7 +32,7 @@
             $('#sortable-container').append(listHtml);
         });
 
-        makeCardsSortable();
+        makeCardsSortable(); 
     }
 
     function makeCardsSortable() {
@@ -42,49 +40,54 @@
             connectWith: '.sortable-cards',
             placeholder: 'card-placeholder',
             start: function (event, ui) {
-                // Sürüklemeye başlanıldığında kaynak listeyi kaydedin
                 ui.item.data('start-pos', ui.item.index());
                 ui.item.data('start-list', ui.item.closest('.card-list').data('list-id'));
             },
             stop: function (event, ui) {
-                // Sürükleme durduğunda hedef listeyi alın
-                console.log(ui.item);
-                var startPos = ui.item.data('start-pos');
                 var startListId = ui.item.data('start-list');
                 var endListId = ui.item.closest('.card-list').data('list-id');
+                var startPos = ui.item.data('start-pos');
                 var endPos = ui.item.index();
-                var cardId = ui.item.data('card-id');
 
-                getCardListWithCards(startListId);
 
+                var affectedLists = [startListId];
                 if (startListId != endListId) {
-                    getCardListWithCards(endListId);
+                    affectedLists.push(endListId);
+                }
+
+                if (!(startListId == endListId && startPos == endPos)) {
+                    updateAffectedLists(affectedLists);
                 }
             }
         });
     }
 
-    function getCardListWithCards(listId) {
-        var cards = $('[data-list-id="' + listId + '"] .card');
-        let data = cards.map(function (index, card) {
-            return {
-                cardId: $(card).data('card-id'),
-                listId: listId,
-                newIndex: index
-            };
-        }).get();
+    function updateAffectedLists(affectedListIds) {
+        var data = [];
 
+        affectedListIds.forEach(function (listId) {
+            var list = $('[data-list-id="' + listId + '"]');
+            var listIndex = list.index();
 
+            var cardsNewIndex = {};
+            list.find('.card').each(function (index) {
+                var cardId = $(this).data('card-id');
+                cardsNewIndex[cardId] = index;
+            });
 
-        setIndexCards();
+            data.push({
+                ListId: parseInt(listId),
+                ListIndex: listIndex,
+                CarddNewIndex: cardsNewIndex
+            });
+        });
+
+        setIndexCards(data);
     }
 
-
-    function setIndexCards() {
-        var data = prepareSetIndexData();
-
+    function setIndexCards(data) {
         $.ajax({
-            url: '/api/Data/SetIndex',
+            url: '/api/Data/SetIndexCards',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),
@@ -95,30 +98,5 @@
                 console.error("Güncelleme sırasında bir hata oluştu: ", error);
             }
         });
-    }
-
-
-    function prepareSetIndexData() {
-        var setIndexData = [];
-
-        $('.card-list').each(function () {
-            var listId = $(this).data('list-id');
-            var listIndex = $(this).index();
-
-            var cardsNewIndex = {};
-            $(this).find('.card').each(function (index) {
-                var cardId = $(this).data('card-id');
-                cardsNewIndex[cardId] = index;
-            });
-
-            setIndexData.push({
-                ListId: listId,
-                ListIndex: listIndex,
-                CarddNewIndex: cardsNewIndex
-            });
-        });
-
-        return setIndexData;
-    }
-
+    } 
 });

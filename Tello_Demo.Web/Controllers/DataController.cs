@@ -26,8 +26,8 @@ public class DataController : Controller
     }
 
 
-    [HttpPost("SetIndex")]
-    public async Task<IActionResult> SetIndex([FromBody] List<SetIndex> setIndexs)
+    [HttpPost("SetIndexCards")]
+    public async Task<IActionResult> SetIndexCards([FromBody] List<SetIndex> setIndexs)
     { 
         return Ok();
     }
