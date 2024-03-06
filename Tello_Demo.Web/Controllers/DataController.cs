@@ -33,6 +33,11 @@ public class DataController : Controller
     }
 
 
+    [HttpPost("SetIndexCardLists")]
+    public async Task<IActionResult> SetIndexCardLists([FromBody] List<SetIndex> setIndexs)
+    {
+        return Ok();
+    }
 
 
 

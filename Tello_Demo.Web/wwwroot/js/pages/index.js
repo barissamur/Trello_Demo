@@ -32,7 +32,9 @@
             $('#sortable-container').append(listHtml);
         });
 
-        makeCardsSortable(); 
+        makeCardsSortable();
+        makeCardListsSortable();
+
     }
 
     function makeCardsSortable() {
@@ -92,11 +94,54 @@
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: function () {
-                console.log("Liste ve kart indeksleri başarıyla güncellendi.");
+                console.log("Liste indeksleri başarıyla güncellendi.");
             },
             error: function (xhr, status, error) {
                 console.error("Güncelleme sırasında bir hata oluştu: ", error);
             }
         });
-    } 
+    }
+
+
+    // cardlist işlemleri
+    function makeCardListsSortable() {
+        $('#sortable-container').sortable({
+            items: '> .card-list', // Sadece doğrudan çocuk olan card-list sınıfına sahip elemanları sıralanabilir yapar
+            placeholder: 'list-placeholder', // Sıralama sırasında gösterilecek placeholder
+            start: function (event, ui) {
+
+            },
+            stop: function (event, ui) {
+                updateAllListIndexes();
+            }
+        });
+    }
+    function updateAllListIndexes() {
+        var data = $('#sortable-container .card-list').map(function (index) {
+            return {
+                ListId: $(this).data('list-id'),
+                ListIndex: index
+            };
+        }).get();
+
+        console.log(data);
+        setIndexCardLists(data);
+    }
+
+    function setIndexCardLists(data) {
+        $.ajax({
+            url: '/api/Data/SetIndexCardLists',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function () {
+                console.log("Kart indeksleri başarıyla güncellendi.");
+            },
+            error: function (xhr, status, error) {
+                console.error("Güncelleme sırasında bir hata oluştu: ", error);
+            }
+        });
+    }
+
+
 });
