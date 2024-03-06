@@ -50,24 +50,65 @@
         });
 
         $('#add-card-list').on('click', function () {
-            var listName = prompt("Liste için bir isim giriniz:");
-            if (listName) {
-                createNewList(listName);
-            }
+            Swal.fire({
+                title: 'Liste için bir isim giriniz',
+                input: 'text',
+                inputPlaceholder: 'Liste adı',
+                showCancelButton: true,
+                confirmButtonText: 'Oluştur',
+                cancelButtonText: 'İptal',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Liste adı girmelisiniz!';
+                    }
+                }
+            }).then((result) => {
+                if (result.value) {
+                    let listName = result.value;
+                    createNewList(listName);
+                }
+            });
         });
+
 
         $('.delete-list').on('click', function () {
             var listId = $(this).data('list-id');
-            if (confirm("Bu listeyi silmek istediğinize emin misiniz?")) {
-                deleteList(listId);
-            }
+
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: "Bu listeyi silmek istediğinize emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet, sil!',
+                cancelButtonText: 'İptal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteList(listId);
+                }
+            });
         });
 
-        $('.delete-card').on('click', function () {
+
+        $('.delete-card').on('click', function (event) {
+            event.stopPropagation();
+
             var cardId = $(this).data('card-id');
-            if (confirm("Bu cardı silmek istediğinize emin misiniz?")) {
-                deleteCard(cardId);
-            }
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: "Bu kartı silmek istediğinize emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet, sil!',
+                cancelButtonText: 'İptal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteCard(cardId);
+                }
+            });
         });
 
         $('.add-card').on('click', function () {
@@ -76,23 +117,21 @@
         });
 
         $('.card').on('click', function () {
-            // Kart ve liste bilgilerini al
             let cardId = $(this).data('card-id');
             let cardTitle = $(this).find('p').text();
-            let cardIndex = $(this).index(); // Kartın index'i
+            let cardIndex = $(this).index();
 
             let list = $(this).closest('.card-list');
             let listId = list.data('list-id');
             let listTitle = list.find('h3').text();
-            let listIndex = list.index(); // Listenin index'i
+            let listIndex = list.index();
 
-            // Modal içindeki başlık input alanını ve verileri doldur
             $('#card-title').val(cardTitle);
             $('#cardEditModal').data('card-id', cardId)
-                               .data('list-id', listId)
-                               .data('list-title', listTitle)
-                               .data('card-index', cardIndex)
-                               .data('list-index', listIndex);
+                .data('list-id', listId)
+                .data('list-title', listTitle)
+                .data('card-index', cardIndex)
+                .data('list-index', listIndex);
             // Modalı aç
             $('#cardEditModal').modal('show');
 
@@ -256,7 +295,6 @@
             Type: 'Yeni'
         };
 
-
         $.ajax({
             url: '/api/Data/CreateList',
             method: 'POST',
@@ -270,7 +308,6 @@
                 console.error("Yeni liste eklenirken bir hata oluştu:", error);
             }
         });
-
     }
 
     function deleteList(listId) {
@@ -304,38 +341,62 @@
     }
 
     function addNewCardToList(listId) {
-        let cardTitle = prompt("Yeni kart için bir başlık girin:");
-        if (!cardTitle) {
-            return;
-        }
-
-        var list = $('[data-list-id="' + listId + '"]');
-        var listTitle = list.find('h3').text();
-
-        let data = {
-            title: cardTitle,
-            cardList: {
-                title: listTitle
-            }
-        };
-
-        $.ajax({
-            url: '/api/Data/AddCardToList/' + listId,
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function () {
-                console.log("Yeni kart başarıyla eklendi.");
-                fetchCardLists();
+        Swal.fire({
+            title: 'Yeni kart için bir başlık girin',
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
             },
-            error: function (xhr, status, error) {
-                console.error("Yeni kart eklenirken bir hata oluştu: ", error);
+            showCancelButton: true,
+            confirmButtonText: 'Ekle',
+            cancelButtonText: 'İptal',
+            showLoaderOnConfirm: true,
+            preConfirm: (cardTitle) => {
+                if (!cardTitle) {
+                    Swal.showValidationMessage("Başlık girmelisiniz");
+                    return;
+                }
+
+                var list = $('[data-list-id="' + listId + '"]');
+                var listTitle = list.find('h3').text();
+
+                let data = {
+                    title: cardTitle,
+                    cardList: {
+                        title: listTitle
+                    }
+                };
+
+                return $.ajax({
+                    url: '/api/Data/AddCardToList/' + listId,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function () {
+                        console.log("Yeni kart başarıyla eklendi.");
+                        fetchCardLists();
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.showValidationMessage(`İstek hatası: ${error}`);
+                    }
+                });
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    title: `Yeni kart başarıyla eklendi!`
+                });
             }
         });
     }
 
+
     $('#save-card-changes').off('click').on('click', function () {
-        // Modal'dan verileri al 
         let cardId = $('#cardEditModal').data('card-id');
         let newTitle = $('#card-title').val();
 
@@ -344,7 +405,6 @@
         let cardIndex = $('#cardEditModal').data('card-index');
         let listIndex = $('#cardEditModal').data('list-index');
 
-        // Güncellenmiş verilerle birlikte AJAX isteği yap
         let data = [{
             Id: listId,
             Title: listTitle,
@@ -354,7 +414,7 @@
                 Id: cardId,
                 Title: newTitle,
                 Index: cardIndex,
-                Description: 'Açıklama', // Gerçek bir açıklama kullanabilirsiniz
+                Description: 'Açıklama',
                 Type: 'Type'
             }]
         }];
@@ -366,9 +426,7 @@
             data: JSON.stringify(data),
             success: function () {
                 console.log("Kart başarıyla güncellendi.");
-                // Başarılı güncellemeden sonra UI'da gerekli güncellemeleri yap
                 $('[data-card-id="' + cardId + '"]').find('p').text(newTitle);
-                // Listeyi ve kartları güncelleyen diğer UI güncellemeleri buraya eklenebilir
             },
             error: function (xhr, status, error) {
                 console.error("Güncelleme sırasında bir hata oluştu: ", error);
