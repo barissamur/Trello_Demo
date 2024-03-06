@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Tello_Demo.Application.DTOs;
 using Tello_Demo.Application.Interfaces;
 
@@ -18,7 +19,7 @@ namespace Tello_Demo.Api.Controllers
         }
 
 
-        // GET: api/<CardListController> 
+        [Authorize]
         [HttpGet]
         public async Task<IEnumerable<CardListDTO>> Get()
         {

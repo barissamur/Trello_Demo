@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Net;
+using System.Net.Http;
 using Tello_Demo.Web.Models;
 
 namespace Tello_Demo.Web.Services;
@@ -8,28 +9,40 @@ public class CardListService
 {
     private readonly HttpClient _clientFactory;
     private readonly ILogger<CardListService> _logger;
+    private readonly TokenService _tokenService;
 
     public CardListService(IHttpClientFactory clientFactory
-        , ILogger<CardListService> logger)
+        , ILogger<CardListService> logger
+        , TokenService tokenService)
     {
         _clientFactory = clientFactory.CreateClient("APIClient");
         _logger = logger;
+        _tokenService = tokenService;
     }
 
     public async Task<IEnumerable<CardList>> GetCardListsAsync()
     {
-        var response = await _clientFactory.GetAsync("api/CardList");
-        response.EnsureSuccessStatusCode();
-
         try
         {
+            var token = await _tokenService.GetTokenAsync();
+            _clientFactory.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _clientFactory.GetAsync("api/CardList");
+            response.EnsureSuccessStatusCode();
+
             var responseStream = await response.Content.ReadAsStreamAsync();
             var cardLists = JsonConvert.DeserializeObject<IEnumerable<CardList>>(await response.Content.ReadAsStringAsync());
             return cardLists ?? new List<CardList>();
         }
-        catch (JsonException ex)
+        catch (HttpRequestException httpEx)
         {
-            throw new InvalidOperationException("JSON serileştirme hatası", ex);
+            _logger.LogError("HTTP istek hatası: {Message}", httpEx.Message);
+            throw;
+        }
+        catch (JsonException jsonEx)
+        {
+            _logger.LogError("JSON serileştirme hatası: {Message}", jsonEx.Message);
+            throw new InvalidOperationException("JSON serileştirme hatası", jsonEx);
         }
     }
 

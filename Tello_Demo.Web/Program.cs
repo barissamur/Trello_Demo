@@ -29,6 +29,7 @@ builder.Services.AddHttpClient("APIClient", client =>
 // Registering CardListService to DI container
 builder.Services.AddScoped<CardListService>();
 builder.Services.AddScoped<CardService>();
+builder.Services.AddScoped<TokenService>();
 
 var app = builder.Build();
 
