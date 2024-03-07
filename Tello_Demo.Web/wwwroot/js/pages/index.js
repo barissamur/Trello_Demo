@@ -1,7 +1,7 @@
 ﻿$(function () {
     let affectedCardId;
     let affectedListId;
-    let eventName;
+    let eventName; 
     fetchCardLists();
 
     function fetchCardLists() {
@@ -149,8 +149,12 @@
         makeCardListsSortable();
     }
 
-
     function fetchLogData() {
+        var spinner = `<div class="spinner-border text-primary" role="status">
+                       <span class="sr-only">Yükleniyor...</span>
+                   </div>`;
+        $('#card-logs').html(spinner);
+
         $.ajax({
             url: '/api/Data/GetLogData',
             method: 'GET',
@@ -167,10 +171,10 @@
             },
             error: function (xhr, status, error) {
                 console.error("Log verisi alınırken bir hata oluştu:", error);
+                $('#card-logs').html('<p>Log verisi alınırken bir hata oluştu.</p>');
             }
         });
     }
-
 
     // cards make sortable 
     function makeCardsSortable() {
@@ -316,35 +320,58 @@
 
         var currentTitle = headerElement.text();
         var listId = headerElement.closest('.card-list').data('list-id');
-        var newTitle = prompt("Yeni başlık giriniz:", currentTitle);
 
-        if (newTitle && newTitle !== currentTitle) {
-            headerElement.text(newTitle);
+        Swal.fire({
+            title: 'Yeni başlık giriniz:',
+            input: 'text',
+            inputValue: currentTitle,
+            showCancelButton: true,
+            confirmButtonText: 'Güncelle',
+            cancelButtonText: 'İptal',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Başlık boş bırakılamaz!';
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed && result.value && result.value !== currentTitle) {
+                var newTitle = result.value;
+                headerElement.text(newTitle);
 
-            var dataToSend = [
-                {
+                var dataToSend = [{
                     Id: listId,
                     Title: newTitle,
                     Type: 'Type',
                     Cards: []
-                }
-            ];
+                }];
 
-            $.ajax({
-                url: `/api/Data/UpdateCardListAndCards?listId=${listId}&eventName=${eventName}`,
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(dataToSend),
-                success: function () {
-                    console.log("Liste başlığı başarıyla güncellendi.");
-                },
-                error: function (xhr, status, error) {
-                    console.error("Başlık güncellenirken bir hata oluştu: ", error);
-                    headerElement.text(currentTitle);
-                }
-            });
-        }
+                $.ajax({
+                    url: `/api/Data/UpdateCardListAndCards?listId=${listId}&eventName=${eventName}`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(dataToSend),
+                    success: function () {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Başarılı!',
+                            text: 'Liste başlığı başarıyla güncellendi.',
+                        });
+                        console.log("Liste başlığı başarıyla güncellendi.");
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'Başlık güncellenirken bir hata oluştu.',
+                        });
+                        console.error("Başlık güncellenirken bir hata oluştu: ", error);
+                        headerElement.text(currentTitle);
+                    }
+                });
+            }
+        });
     }
+
 
     function createNewList(listName) {
         let data = {
@@ -443,7 +470,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 Swal.fire({
-                    position: "top-end",
+                    position: "center-center",
                     icon: "success",
                     showConfirmButton: false,
                     timer: 1500,
@@ -452,7 +479,6 @@
             }
         });
     }
-
 
     $('#save-card-changes').off('click').on('click', function () {
         eventName = 'İsim güncellendi!';

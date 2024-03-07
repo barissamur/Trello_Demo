@@ -35,7 +35,7 @@ body {
 }
 
 .card-list {
-    width: calc((100% - 80px) / 4);
+    width: 288px;
     background-color: #ebecf0;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -77,8 +77,7 @@ body {
 }
 
 .list-placeholder {
-    width: calc((100% - 80px) / 4); /* Sabit geniþlik */
-    height: auto;
+    width: 288px; 
 }
 
 .sortable-card-lists > .ui-sortable-placeholder {
@@ -99,7 +98,7 @@ body {
 
 
 .add-card-list {
-    width: calc((100% - 80px) / 4);
+    width: 288px;
     height: 50px;
     background-color: #ffffff;
     border-radius: 5px;
