@@ -5,9 +5,23 @@ using Tello_Demo.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+var webRootPath = builder.Environment.WebRootPath;
+var logDirectoryPath = Path.Combine(webRootPath, "log");
+
+if (!Directory.Exists(logDirectoryPath))
+    Directory.CreateDirectory(logDirectoryPath);
+
+// Serilog yapýlandýrmasý
+builder.Host.UseSerilog((ctx, lc) => lc
+    .WriteTo.Console()
+    .WriteTo.File(Path.Combine(logDirectoryPath, "CardOperationsLog-.log"), rollingInterval: RollingInterval.Day));
+
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+//jwt options
 builder.Services.AddSession();
 builder.Services.AddAuthentication(options =>
 {
@@ -21,9 +35,9 @@ builder.Services.AddAuthentication(options =>
 
 
 // Serilog configuration
-builder.Host.UseSerilog((ctx, lc) => lc
-    .WriteTo.Console()
-    .WriteTo.File("logs/log-.log", rollingInterval: RollingInterval.Day));
+//builder.Host.UseSerilog((ctx, lc) => lc
+//    .WriteTo.Console()
+//    .WriteTo.File("logs/log-.log", rollingInterval: RollingInterval.Day));
 
 
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
@@ -44,8 +58,9 @@ builder.Services.AddHttpClient("APIClient", client =>
 // Registering CardListService to DI container
 builder.Services.AddScoped<CardListService>();
 builder.Services.AddScoped<CardService>();
-builder.Services.AddScoped<TokenService>();
+builder.Services.AddSingleton<CardLogService>(new CardLogService(logDirectoryPath));
 
+builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<BearerTokenHandler>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

@@ -1,4 +1,7 @@
 ﻿$(function () {
+    let affectedCardId;
+    let affectedListId;
+    let eventName;
     fetchCardLists();
 
     function fetchCardLists() {
@@ -95,6 +98,9 @@
             event.stopPropagation();
 
             var cardId = $(this).data('card-id');
+            let card = $(this).closest('.card');
+            let cardTitle = card.find('p').text();
+            console.log(card);
             Swal.fire({
                 title: 'Emin misiniz?',
                 text: "Bu kartı silmek istediğinize emin misiniz?",
@@ -106,7 +112,7 @@
                 cancelButtonText: 'İptal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    deleteCard(cardId);
+                    deleteCard(cardId, cardTitle);
                 }
             });
         });
@@ -132,14 +138,41 @@
                 .data('list-title', listTitle)
                 .data('card-index', cardIndex)
                 .data('list-index', listIndex);
+
+            $('#cardEditModal').on('shown.bs.modal', function () {
+                fetchLogData(cardId);
+            });
             // Modalı aç
             $('#cardEditModal').modal('show');
-
         });
 
         makeCardsSortable();
         makeCardListsSortable();
     }
+
+
+    function fetchLogData() {
+        $.ajax({
+            url: '/api/Data/GetLogData', 
+            method: 'GET',
+            dataType: 'json', 
+            success: function (cardLogs) {
+                var logsHtml = cardLogs.map(function (log) {
+                    var eventTime = new Date(log.eventTime).toLocaleString();
+                    return `<div class="log-entry">
+                            <div class="log-date">${eventTime}</div>
+                            <div class="log-details">${log.details}</div>
+                        </div>`;
+                }).join('');
+                $('#card-logs').html(logsHtml); 
+            },
+            error: function (xhr, status, error) {
+                console.error("Log verisi alınırken bir hata oluştu:", error);
+            }
+        });
+    }
+
+
 
     function makeCardsSortable() {
         $('.sortable-cards').sortable({
@@ -150,24 +183,27 @@
                 ui.item.data('start-list', ui.item.closest('.card-list').data('list-id'));
             },
             stop: function (event, ui) {
+                affectedCardId = ui.item.data('card-id');
                 var startListId = ui.item.data('start-list');
                 var endListId = ui.item.closest('.card-list').data('list-id');
                 var startPos = ui.item.data('start-pos');
                 var endPos = ui.item.index();
 
                 var affectedLists = [startListId];
-                if (startListId != endListId) {
-                    affectedLists.push(endListId);
-                }
 
-                if (!(startListId == endListId && startPos == endPos)) {
+                if (startListId != endListId)
+                    affectedLists.push(endListId);
+
+                if (!(startListId == endListId && startPos == endPos))
                     updateAffectedLists(affectedLists);
-                }
+
             }
         });
     }
 
     function updateAffectedLists(affectedListIds) {
+        eventName = affectedListIds.length == 2 ? "Taşındı" : "Güncellendi";
+
         var data = affectedListIds.map(function (listId) {
             var list = $('[data-list-id="' + listId + '"]');
             var listIndex = list.index();
@@ -199,7 +235,7 @@
 
     function setIndexCards(data) {
         $.ajax({
-            url: '/api/Data/UpdateCardListAndCards',
+            url: `/api/Data/UpdateCardListAndCards?cardId=${affectedCardId}&eventName=${eventName}`,
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),
@@ -222,6 +258,7 @@
 
             },
             stop: function (event, ui) {
+                affectedListId = ui.item.data('list-id');
                 updateAllListIndexes();
             }
         });
@@ -240,8 +277,9 @@
     }
 
     function setIndexCardLists(data) {
+        eventName = 'Güncellendi';
         $.ajax({
-            url: '/api/Data/UpdateCardListAndCards',
+            url: `/api/Data/UpdateCardListAndCards?listId=${affectedListId}&eventName=${eventName}`,
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),
@@ -256,6 +294,8 @@
 
     // click işlemleri 
     function editCardListTitle(headerElement) {
+        eventName = 'İsim güncellendi!';
+
         var currentTitle = headerElement.text();
         var listId = headerElement.closest('.card-list').data('list-id');
         var newTitle = prompt("Yeni başlık giriniz:", currentTitle);
@@ -273,7 +313,7 @@
             ];
 
             $.ajax({
-                url: `/api/Data/UpdateCardListAndCards`,
+                url: `/api/Data/UpdateCardListAndCards?listId=${listId}&eventName=${eventName}`,
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(dataToSend),
@@ -325,9 +365,9 @@
         });
     }
 
-    function deleteCard(cardId) {
+    function deleteCard(cardId, cardTitle) {
         $.ajax({
-            url: '/api/Data/DeleteCard/' + cardId,
+            url: `/api/Data/DeleteCard/${cardId}?cardTitle=${cardTitle}`,
             method: 'DELETE',
             success: function () {
                 console.log("Card başarıyla silindi.");
@@ -397,6 +437,7 @@
 
 
     $('#save-card-changes').off('click').on('click', function () {
+        eventName = 'İsim güncellendi!';
         let cardId = $('#cardEditModal').data('card-id');
         let newTitle = $('#card-title').val();
 
@@ -420,7 +461,7 @@
         }];
 
         $.ajax({
-            url: '/api/Data/UpdateCardListAndCards',
+            url: `/api/Data/UpdateCardListAndCards?cardId=${cardId}&eventName=${eventName}`,
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),

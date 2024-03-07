@@ -27,8 +27,8 @@ body {
 .sortable-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px; /* Liste aralarý için boþluk */
-    align-items: flex-start; /* Liste yükseklikleri farklý olsa bile üstte baþlamalarýný saðlar */
+    gap: 20px;
+    align-items: flex-start;
     padding: 20px;
     background: linear-gradient(to right, #bcb4c4 0%, #dedede 100%);
     justify-content: flex-start;
@@ -58,7 +58,6 @@ body {
     min-height: 100px;
 }
 
-/* Kartlar */
 .card {
     padding: 10px;
     background-color: #ffffff;
@@ -99,7 +98,6 @@ body {
     }
 
 
-/* Yeni kart listesi eklemek için '+' iþaretinin stil tanýmý */
 .add-card-list {
     width: 300px;
     height: 50px;
@@ -118,23 +116,40 @@ body {
 }
 
     .add-card-list:hover {
-        background-color: #e0e0e0; /* Arka plan rengi deðiþikliði */
-        box-shadow: 0 4px 6px rgba(0,0,0,0.15); /* Daha büyük gölge efekti */
+        background-color: #e0e0e0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.15);
     }
 
 
 .card {
     position: relative;
-    /* Diðer kart stilleri */
 }
 
 .delete-card {
     position: absolute;
     top: 5px;
     right: 5px;
-    display: none; /* Baþlangýçta gizli */
+    display: none;
 }
 
 .card:hover .delete-card {
-    display: block; 
+    display: block;
+}
+
+
+.log-entry {
+    border-bottom: 1px solid #eee;
+    padding: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.log-date {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.log-details {
+    white-space: pre-wrap;
 }

@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using Tello_Demo.Web.Enums;
 using Tello_Demo.Web.Models;
 using Tello_Demo.Web.Services;
 
@@ -9,12 +12,18 @@ public class DataController : Controller
 {
     private readonly CardListService _cardListService;
     private readonly CardService _cardService;
+    private readonly CardLogService _cardLogService;
+    private readonly IWebHostEnvironment _webHostEnvironment;
 
     public DataController(CardListService cardListService
-        , CardService cardService)
+        , CardService cardService
+        , CardLogService cardLogService
+        , IWebHostEnvironment webHostEnvironment)
     {
         _cardListService = cardListService;
         _cardService = cardService;
+        _cardLogService = cardLogService;
+        _webHostEnvironment = webHostEnvironment;
     }
 
 
@@ -28,9 +37,24 @@ public class DataController : Controller
 
 
     [HttpPost("UpdateCardListAndCards")]
-    public async Task<IActionResult> UpdateCardListAndCards([FromBody] List<CardList> cardLists, bool onlyTitle)
+    public async Task<IActionResult> UpdateCardListAndCards([FromBody] List<CardList> cardLists, int cardId, int listId, string eventName)
     {
         var response = await _cardListService.UpdateCardListAsync(cardLists);
+
+        var result = cardLists.SelectMany(cl => cl.Cards, (cl, card) => new { cl.Id, cl.Title, Card = card })
+                              .FirstOrDefault(x => x.Card.Id == cardId);
+        string details = "";
+
+        if (cardId != 0)
+        {
+
+            details = cardLists.Count == 2
+                ? $"Card Id: {cardId}, Card Title: {result.Card.Title} => {result.Title} listesine {eventName}"
+                : $"Card Id: {cardId}, Card Title: {result.Card.Title} => {result.Title} listesi içinde {eventName}";
+
+            await _cardLogService.LogCardEventAsync(details);
+        }
+
         return Ok();
     }
 
@@ -68,11 +92,16 @@ public class DataController : Controller
 
 
     [HttpDelete("DeleteCard/{id}")]
-    public async Task<IActionResult> DeleteCard(int id)
+    public async Task<IActionResult> DeleteCard(int id, string cardTitle)
     {
         try
         {
             var response = await _cardService.DeleteCardAsync(id);
+
+            string details = $"{cardTitle} kartı silindi";
+
+            await _cardLogService.LogCardEventAsync(details);
+
             return Ok();
 
         }
@@ -91,8 +120,13 @@ public class DataController : Controller
             card.CardList.Id = id;
             card.CardList.Type = "Type";
             card.Type = "Type";
-            card.Description = "Açıklama";
+            card.Description = "Description";
             var response = await _cardService.CreateCardAsync(card);
+
+            string details = $"{card.Title} kartı oluşturuldu";
+
+            await _cardLogService.LogCardEventAsync(details);
+
             return Ok();
 
         }
@@ -103,75 +137,28 @@ public class DataController : Controller
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // GET: DataController/Details/5
-    public ActionResult Details(int id)
+    [HttpGet("GetLogData")]
+    public async Task<IActionResult> GetLogData()
     {
-        return View();
-    }
-
-    // GET: DataController/Create
-    public ActionResult Create()
-    {
-        return View();
-    }
-
-
-    // GET: DataController/Edit/5
-    public ActionResult Edit(int id)
-    {
-        return View();
-    }
-
-    // POST: DataController/Edit/5
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public ActionResult Edit(int id, IFormCollection collection)
-    {
-        try
+        var logFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "log", "log", "CardOperationsLog.log");
+        if (!System.IO.File.Exists(logFilePath))
         {
-            return RedirectToAction(nameof(Index));
+            return NotFound("Log dosyası bulunamadı.");
         }
-        catch
-        {
-            return View();
-        }
+
+        var logFileContent = await System.IO.File.ReadAllTextAsync(logFilePath);
+
+        // Dosyanın sonundaki fazladan virgülü kaldır
+        logFileContent = logFileContent.TrimEnd(',');
+
+        // Tek bir JSON dizisi olarak parse etmek için köşeli parantezler ekleyin
+        logFileContent = "[" + logFileContent + "]";
+
+        var logEntries = JsonConvert.DeserializeObject<IEnumerable<CardLog>>(logFileContent);
+        return Ok(logEntries);
     }
 
-    // GET: DataController/Delete/5
-    public ActionResult Delete(int id)
-    {
-        return View();
-    }
 
-    // POST: DataController/Delete/5
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public ActionResult Delete(int id, IFormCollection collection)
-    {
-        try
-        {
-            return RedirectToAction(nameof(Index));
-        }
-        catch
-        {
-            return View();
-        }
-    }
+
+
 }
