@@ -78,7 +78,7 @@ body {
 
 .list-placeholder {
     width: calc((100% - 80px) / 4); /* Sabit geniþlik */
-    height: 50px;
+    height: auto;
 }
 
 .sortable-card-lists > .ui-sortable-placeholder {

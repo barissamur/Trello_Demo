@@ -172,11 +172,12 @@
     }
 
 
-
+    // cards make sortable 
     function makeCardsSortable() {
         $('.sortable-cards').sortable({
             connectWith: '.sortable-cards',
             placeholder: 'card-placeholder',
+            animation: 200,
             forcePlaceholderSize: true,
             helper: function (event, ui) {
                 ui.children().each(function () {
@@ -263,16 +264,18 @@
     }
 
 
-    // cardlist işlemleri
+    // cardlists make sortable 
     function makeCardListsSortable() {
         $('#sortable-container').sortable({
             items: '> .card-list',
+            tolerance: "pointer",
             placeholder: 'list-placeholder',
             forcePlaceholderSize: true,
             start: function (event, ui) {
-
             },
             stop: function (event, ui) {
+                $(ui.item).effect("highlight", { color: '#63b462' }, 1000);
+
                 affectedListId = ui.item.data('list-id');
                 updateAllListIndexes();
             }
