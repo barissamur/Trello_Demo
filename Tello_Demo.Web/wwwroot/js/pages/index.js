@@ -100,7 +100,6 @@
             var cardId = $(this).data('card-id');
             let card = $(this).closest('.card');
             let cardTitle = card.find('p').text();
-            console.log(card);
             Swal.fire({
                 title: 'Emin misiniz?',
                 text: "Bu kartı silmek istediğinize emin misiniz?",
@@ -153,9 +152,9 @@
 
     function fetchLogData() {
         $.ajax({
-            url: '/api/Data/GetLogData', 
+            url: '/api/Data/GetLogData',
             method: 'GET',
-            dataType: 'json', 
+            dataType: 'json',
             success: function (cardLogs) {
                 var logsHtml = cardLogs.map(function (log) {
                     var eventTime = new Date(log.eventTime).toLocaleString();
@@ -164,7 +163,7 @@
                             <div class="log-details">${log.details}</div>
                         </div>`;
                 }).join('');
-                $('#card-logs').html(logsHtml); 
+                $('#card-logs').html(logsHtml);
             },
             error: function (xhr, status, error) {
                 console.error("Log verisi alınırken bir hata oluştu:", error);
@@ -178,11 +177,26 @@
         $('.sortable-cards').sortable({
             connectWith: '.sortable-cards',
             placeholder: 'card-placeholder',
+            forcePlaceholderSize: true,
+            helper: function (event, ui) {
+                ui.children().each(function () {
+                    $(this).width($(this).width());
+                });
+                return ui;
+            },
             start: function (event, ui) {
+                ui.helper.animate({
+                    opacity: 0.85,
+                }, 300);
+
                 ui.item.data('start-pos', ui.item.index());
                 ui.item.data('start-list', ui.item.closest('.card-list').data('list-id'));
             },
             stop: function (event, ui) {
+                ui.item.animate({
+                    opacity: 1.0,
+                }, 300);
+
                 affectedCardId = ui.item.data('card-id');
                 var startListId = ui.item.data('start-list');
                 var endListId = ui.item.closest('.card-list').data('list-id');
@@ -254,6 +268,7 @@
         $('#sortable-container').sortable({
             items: '> .card-list',
             placeholder: 'list-placeholder',
+            forcePlaceholderSize: true,
             start: function (event, ui) {
 
             },

@@ -18,6 +18,7 @@ html {
 }
 
 body {
+    background: linear-gradient(to right, #28315a 0%, #171433 100%);
     margin-bottom: 60px;
 }
 
@@ -30,20 +31,20 @@ body {
     gap: 20px;
     align-items: flex-start;
     padding: 20px;
-    background: linear-gradient(to right, #bcb4c4 0%, #dedede 100%);
     justify-content: flex-start;
 }
 
 .card-list {
-    width: 300px;
-    margin-right: 20px;
+    width: calc((100% - 80px) / 4);
     background-color: #ebecf0;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    margin-bottom: 20px;
 }
+
 
     .card-list h3 {
         padding: 15px;
@@ -68,7 +69,7 @@ body {
 }
 
 .card-placeholder, .list-placeholder {
-    background-color: #a4a4a4 !important;
+    background-color: #63b462 !important;
     border: 2px dashed #888;
     margin-bottom: 10px;
     border-radius: 6px;
@@ -76,9 +77,8 @@ body {
 }
 
 .list-placeholder {
-    width: 300px;
+    width: calc((100% - 80px) / 4); /* Sabit geniþlik */
     height: 50px;
-    margin-right: 20px;
 }
 
 .sortable-card-lists > .ui-sortable-placeholder {
@@ -99,7 +99,7 @@ body {
 
 
 .add-card-list {
-    width: 300px;
+    width: calc((100% - 80px) / 4);
     height: 50px;
     background-color: #ffffff;
     border-radius: 5px;
@@ -116,7 +116,7 @@ body {
 }
 
     .add-card-list:hover {
-        background-color: #e0e0e0;
+        background-color: #c9ddd4;
         box-shadow: 0 4px 6px rgba(0,0,0,0.15);
     }
 
