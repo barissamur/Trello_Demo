@@ -16,9 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
- 
 
-// JWT ayarlarýný `appsettings.json` dosyasýndan al
+
+// JWT ayarlarý
 var jwtSection = builder.Configuration.GetSection("Jwt");
 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSection["Key"]));
 
@@ -38,10 +38,25 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidAudience = jwtSection["Audience"],
         ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero // Opsiyonel: Token süresini hassas bir þekilde kontrol etmek için
+        ClockSkew = TimeSpan.Zero
+    };
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            // Burasý hata durumlarýnda tetiklenecektir.
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        { 
+            return Task.CompletedTask;
+        }
     };
 });
-  
+builder.Services.AddAuthorization();
+
+// JWT ayarlarý
+
 
 var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContext") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.");
 
@@ -99,10 +114,12 @@ app.MapPost("/token", (IConfiguration config) =>
     {
         Subject = new ClaimsIdentity(new Claim[]
         {
-            new Claim(ClaimTypes.Name, "statikKullaniciAdi"), 
+            new Claim(ClaimTypes.Name, "statikKullaniciAdi"),
         }),
         Expires = DateTime.UtcNow.AddHours(1),
-        SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+        SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256),
+        Audience = config["Jwt:Audience"],
+        Issuer = config["Jwt:Issuer"]
     };
 
     var token = tokenHandler.CreateToken(tokenDescriptor);

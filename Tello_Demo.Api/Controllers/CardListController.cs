@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tello_Demo.Application.DTOs;
 using Tello_Demo.Application.Interfaces;
@@ -17,8 +18,7 @@ namespace Tello_Demo.Api.Controllers
         {
             _cardListService = cardListService;
         }
-
-
+         
         [Authorize]
         [HttpGet]
         public async Task<IEnumerable<CardListDTO>> Get()

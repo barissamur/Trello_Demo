@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
+using Tello_Demo.Web.Handler;
 using Tello_Demo.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,10 +8,23 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddSession();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie(options =>
+{
+    options.LoginPath = "/Account/Index";
+    options.Cookie.Name = "Authorization";
+});
+
+
 // Serilog configuration
 builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.Console()
     .WriteTo.File("logs/log-.log", rollingInterval: RollingInterval.Day));
+
 
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
 {
@@ -17,19 +32,23 @@ builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 });
 
-// Yapýlandýrmadan BaseUrl deðerini okuyun
-var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"]; // Bu satýrý düzelttim
 
-// HttpClient servisini kaydedin ve BaseAddress olarak ApiSettings:BaseUrl kullanýn
+var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"];
+
 builder.Services.AddHttpClient("APIClient", client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
-});
+}).AddHttpMessageHandler<BearerTokenHandler>();
+
 
 // Registering CardListService to DI container
 builder.Services.AddScoped<CardListService>();
 builder.Services.AddScoped<CardService>();
 builder.Services.AddScoped<TokenService>();
+
+builder.Services.AddScoped<BearerTokenHandler>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 var app = builder.Build();
 
@@ -45,7 +64,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(

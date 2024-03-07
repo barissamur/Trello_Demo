@@ -1,7 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 using Tello_Demo.Web.Models;
-using Tello_Demo.Web.Services;
 
 namespace Tello_Demo.Web.Controllers;
 

@@ -23,10 +23,7 @@ public class CardListService
     public async Task<IEnumerable<CardList>> GetCardListsAsync()
     {
         try
-        {
-            var token = await _tokenService.GetTokenAsync();
-            _clientFactory.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
+        {  
             var response = await _clientFactory.GetAsync("api/CardList");
             response.EnsureSuccessStatusCode();
 
