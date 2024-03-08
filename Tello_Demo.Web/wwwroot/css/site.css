@@ -77,7 +77,7 @@ body {
 }
 
 .list-placeholder {
-    width: 288px; 
+    width: 288px;
 }
 
 .sortable-card-lists > .ui-sortable-placeholder {
@@ -146,6 +146,7 @@ body {
 
 .log-date {
     font-weight: bold;
+    color: #0079bf;
     margin-right: 10px;
 }
 

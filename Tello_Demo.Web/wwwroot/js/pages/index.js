@@ -285,6 +285,7 @@
             }
         });
     }
+
     function updateAllListIndexes() {
         var data = $('#sortable-container .card-list').map(function (index) {
             return {
