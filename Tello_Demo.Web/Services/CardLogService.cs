@@ -32,11 +32,11 @@ public class CardLogService
             Details = details
         };
 
-        string logJson = JsonConvert.SerializeObject(logEntry) + ","; // Virgül ekleyin
+        string logJson = JsonConvert.SerializeObject(logEntry) + ","; 
 
         using (StreamWriter sw = new StreamWriter(_logFilePath, append: true, Encoding.UTF8))
         {
-            await sw.WriteLineAsync(logJson); // Her log kaydını yeni bir satıra ekleyin
+            await sw.WriteLineAsync(logJson);
         }
     }
 

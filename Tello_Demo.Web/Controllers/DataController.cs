@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
-using Tello_Demo.Web.Enums;
 using Tello_Demo.Web.Models;
 using Tello_Demo.Web.Services;
 
@@ -147,11 +145,8 @@ public class DataController : Controller
         }
 
         var logFileContent = await System.IO.File.ReadAllTextAsync(logFilePath);
-
-        // Dosyanın sonundaki fazladan virgülü kaldır
-        logFileContent = logFileContent.TrimEnd(',');
-
-        // Tek bir JSON dizisi olarak parse etmek için köşeli parantezler ekleyin
+         
+        logFileContent = logFileContent.TrimEnd(','); 
         logFileContent = "[" + logFileContent + "]";
 
         var logEntries = JsonConvert.DeserializeObject<IEnumerable<CardLog>>(logFileContent);

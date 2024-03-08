@@ -1,6 +1,4 @@
-﻿using Tello_Demo.Domain.Models;
-
-namespace Tello_Demo.Application.DTOs;
+﻿namespace Tello_Demo.Application.DTOs;
 
 public class CardDTO 
 {

@@ -43,8 +43,7 @@ builder.Services.AddAuthentication(options =>
     options.Events = new JwtBearerEvents
     {
         OnAuthenticationFailed = context =>
-        {
-            // Burasý hata durumlarýnda tetiklenecektir.
+        { 
             return Task.CompletedTask;
         },
         OnTokenValidated = context =>
@@ -54,24 +53,19 @@ builder.Services.AddAuthentication(options =>
     };
 });
 builder.Services.AddAuthorization();
-
-// JWT ayarlarý
-
+ 
 
 var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContext") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
-
-// iç içe döngü olarak getirme sorunu için
+ 
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.None;
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 });
-
-
-// injection
+ 
 builder.Services.AddScoped<ICardListService, CardListService>();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped(typeof(IRepo<>), typeof(EFRepository<>));
