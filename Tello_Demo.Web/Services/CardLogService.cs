@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System.Text;
-using System.Text.Json;
-using Tello_Demo.Web.Enums;
 using Tello_Demo.Web.Models;
 
 namespace Tello_Demo.Web.Services;
