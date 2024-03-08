@@ -16,7 +16,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-
+//CORS ayarlarý
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 
 // JWT ayarlarý
 var jwtSection = builder.Configuration.GetSection("Jwt");
@@ -43,29 +52,29 @@ builder.Services.AddAuthentication(options =>
     options.Events = new JwtBearerEvents
     {
         OnAuthenticationFailed = context =>
-        { 
+        {
             return Task.CompletedTask;
         },
         OnTokenValidated = context =>
-        { 
+        {
             return Task.CompletedTask;
         }
     };
 });
 builder.Services.AddAuthorization();
- 
+
 
 var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContext") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
- 
+
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.None;
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 });
- 
+
 builder.Services.AddScoped<ICardListService, CardListService>();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped(typeof(IRepo<>), typeof(EFRepository<>));
@@ -97,6 +106,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseCors("AllowAll");
+
 app.MapControllers();
 
 app.MapPost("/token", (IConfiguration config) =>
@@ -121,5 +132,7 @@ app.MapPost("/token", (IConfiguration config) =>
 
     return Results.Ok(new { Token = tokenString });
 });
+
+app.MapGet("/", () => "Healthy");
 
 app.Run();
